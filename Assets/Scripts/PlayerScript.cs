@@ -4,23 +4,26 @@ using UnityEngine;
 
 public class PlayerScript : MonoBehaviour
 {
+    [SerializeField] private CameraManager cameraManager;
+    [SerializeField] private float speed = 5.0f;
+    [SerializeField] private float deathTimerTotal = 3.0f;
+
     private Rigidbody2D rigidBody;
-    public CameraManager cameraManager;
 
-    public float speed = 5.0f;
-    public float deathTimer = 3.0f;
-
-    private bool alive = true;
-    private bool goingRight = false;
     private Vector3 startingPos;
+    private Quaternion startingRotation;
+    private float deathTimer = 0.0f;
+    private bool alive = true;
+    private bool onRightWall = false;
+    private bool onLeftWall = false;
 
     // Start is called before the first frame update
     void Start()
     {
         rigidBody = GetComponent<Rigidbody2D>();
-        cameraManager = cameraManager.GetComponent<CameraManager>();
-
         startingPos = transform.position;
+        startingRotation = transform.rotation;
+        deathTimer = deathTimerTotal;
     }
 
     // Update is called once per frame
@@ -28,16 +31,12 @@ public class PlayerScript : MonoBehaviour
     {
         if (alive)
         {
-            checkBounds();
-
-            if (Input.GetKeyDown("a") || Input.GetKeyDown("left"))
+            if (Input.GetKeyDown("a") || Input.GetKeyDown("left") && !onLeftWall)
             {
-                goingRight = false;
                 rigidBody.velocity = new Vector2(-speed * 0.5f, speed);
             }
-            if (Input.GetKeyDown("d") || Input.GetKeyDown("right"))
+            if (Input.GetKeyDown("d") || Input.GetKeyDown("right") && !onRightWall)
             {
-                goingRight = true;
                 rigidBody.velocity = new Vector2(speed * 0.5f, speed);
             }
         }
@@ -46,7 +45,7 @@ public class PlayerScript : MonoBehaviour
             if (deathTimer > 0.0f)
             {
                 deathTimer -= Time.deltaTime;
-                rigidBody.velocity = new Vector2(0.0f, -10.0f); // fall
+                transform.Rotate(new Vector3(0.0f, 0.0f, transform.rotation.z + (500 * Time.deltaTime)));
             }
             else
             {
@@ -55,21 +54,37 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
-    private void checkBounds()
-    {
-        if (Mathf.Abs(transform.position.x - 0.0f) > 2.494f) // if we hit edge of screen
-        {
-            rigidBody.velocity = new Vector2(0.0f, -5.0f); // slide down
-            transform.position = new Vector2(goingRight ? 2.494f : -2.494f, transform.position.y); // set position depending on which way player is moving
-        }
-    }
-
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.tag == "Deadly" && alive)
         {
-            cameraManager.shaking = true;
+            cameraManager.setShaking(true);
+            rigidBody.velocity = new Vector2(0.0f, -10.0f); // fall
             alive = false;
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Right Wall")
+        {
+            onRightWall = true;
+        }
+        else if (collision.gameObject.tag == "Left Wall")
+        {
+            onLeftWall = true;
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Right Wall")
+        {
+            onRightWall = false;
+        }
+        else if (collision.gameObject.tag == "Left Wall")
+        {
+            onLeftWall = false;
         }
     }
 
@@ -77,11 +92,10 @@ public class PlayerScript : MonoBehaviour
     {
         cameraManager.ResetCameraManager();
 
-        deathTimer = 3.0f;
-        alive = true;
-        goingRight = false;
-        transform.position = startingPos;
+        transform.SetPositionAndRotation(startingPos, startingRotation);
 
+        deathTimer = deathTimerTotal;
+        alive = true;
         rigidBody.Sleep();
     }
 }

@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Deadly
+  - Right Wall
+  - Left Wall
   layers:
   - Default
   - TransparentFX

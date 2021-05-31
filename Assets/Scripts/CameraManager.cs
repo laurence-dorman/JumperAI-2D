@@ -5,22 +5,19 @@ using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
+    [SerializeField] private CameraScript mainCamera;
 
-    public CameraScript mainCamera;
+    [SerializeField] private float totalShakeTime = 0.5f;
+    [SerializeField] private float shakeAmount = 1.0f;
 
-    public bool shaking;
-    public float totalShakeTime = 0.5f;
-    public float shakeAmount = 1.0f;
-
-    float shakeTimer;
-    Vector3 startingPos;
+    private bool shaking;
+    private float shakeTimer;
 
     // Start is called before the first frame update
     void Start()
     {
         mainCamera = mainCamera.GetComponent<CameraScript>();
 
-        startingPos = mainCamera.transform.position;
         StopShake();
     }
 
@@ -59,5 +56,10 @@ public class CameraManager : MonoBehaviour
     {
         StopShake();
         mainCamera.ResetCamera();
+    }
+
+    public void setShaking(bool b)
+    {
+        shaking = b;
     }
 }
