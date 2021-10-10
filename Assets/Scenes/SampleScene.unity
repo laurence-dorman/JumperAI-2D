@@ -480,10 +480,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1621081066}
-  cameraManager: {fileID: 1360476035}
   deathZone: {fileID: 8919916}
   Wall_R: {fileID: 757670158}
   Wall_L: {fileID: 1770107905}
+  cameraManager: {fileID: 1360476035}
 --- !u!4 &203265884
 Transform:
   m_ObjectHideFlags: 0
@@ -2529,9 +2529,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53323bf0e75bb0244bddf8f3928765f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraManager: {fileID: 1360476035}
   speed: 5
   deathTimerTotal: 3
+  gameManager: {fileID: 203265883}
 --- !u!1 &1732833048
 GameObject:
   m_ObjectHideFlags: 0

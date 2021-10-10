@@ -6,7 +6,6 @@ public class PlayerScript : MonoBehaviour
 {
     [SerializeField] private float speed = 5.0f;
     [SerializeField] private float deathTimerTotal = 3.0f;
-    [SerializeField] private CameraManager cameraManager;
     [SerializeField] private GameManager gameManager;
 
     private Rigidbody2D rigidBody;
@@ -58,7 +57,7 @@ public class PlayerScript : MonoBehaviour
     {
         if (other.gameObject.tag == "Deadly" && alive)
         {
-            cameraManager.setShaking(true);
+            gameManager.cameraManager.setShaking(true);
             rigidBody.velocity = new Vector2(0.0f, -10.0f); // fall
             alive = false;
         }

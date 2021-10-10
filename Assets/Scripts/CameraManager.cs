@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
-    [SerializeField] private CameraScript mainCamera;
+    public CameraScript mainCamera;
 
     [SerializeField] private float totalShakeTime = 0.5f;
     [SerializeField] private float shakeAmount = 1.0f;

@@ -5,7 +5,7 @@ using UnityEngine;
 public class CameraScript : MonoBehaviour
 {
 
-    public GameObject player;
+    [SerializeField] private GameObject player;
 
     Vector3 initialPos;
 
