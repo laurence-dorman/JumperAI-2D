@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class PlayerScript : MonoBehaviour
 {
-    [SerializeField] private CameraManager cameraManager;
     [SerializeField] private float speed = 5.0f;
     [SerializeField] private float deathTimerTotal = 3.0f;
+    [SerializeField] private CameraManager cameraManager;
+    [SerializeField] private GameManager gameManager;
 
     private Rigidbody2D rigidBody;
-
     private Vector3 startingPos;
     private Quaternion startingRotation;
     private float deathTimer = 0.0f;
@@ -49,7 +49,7 @@ public class PlayerScript : MonoBehaviour
             }
             else
             {
-                ResetPlayer();
+                gameManager.RestartGame();
             }
         }
     }
@@ -88,13 +88,12 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
-    private void ResetPlayer()
+    public void ResetPlayer()
     {
-        cameraManager.ResetCameraManager();
-
-        transform.SetPositionAndRotation(startingPos, startingRotation);
-
         deathTimer = deathTimerTotal;
+        rigidBody.velocity = new Vector2(0.0f, 0.0f);
+        rigidBody.angularVelocity = 0.0f;
+        transform.SetPositionAndRotation(startingPos, startingRotation);
         alive = true;
         rigidBody.Sleep();
     }
