@@ -7,7 +7,7 @@ public class CameraScript : MonoBehaviour
 
     [SerializeField] private GameObject player;
 
-    Vector3 initialPos;
+    public Vector3 initialPos;
 
     // Start is called before the first frame update
     void Start()
@@ -21,7 +21,6 @@ public class CameraScript : MonoBehaviour
         if (player.transform.position.y >= transform.position.y)
         {
             transform.position = new Vector3(initialPos.x, player.transform.position.y, initialPos.z);
-           
         }
     }
 

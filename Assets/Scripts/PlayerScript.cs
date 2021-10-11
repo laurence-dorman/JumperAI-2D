@@ -11,7 +11,7 @@ public class PlayerScript : MonoBehaviour
     private Rigidbody2D rigidBody;
     private Vector3 startingPos;
     private Quaternion startingRotation;
-    private float deathTimer = 0.0f;
+    private float deathTimer;
     private bool alive = true;
     private bool onRightWall = false;
     private bool onLeftWall = false;

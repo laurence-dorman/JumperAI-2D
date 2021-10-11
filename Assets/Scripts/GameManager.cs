@@ -10,14 +10,12 @@ public class GameManager : MonoBehaviour
 
     public CameraManager cameraManager;
 
-    float deathZoneOffsetY;
-    Vector3 initialPos;
+    private float deathZoneOffsetY;
 
     // Use this for initialization
     void Start()
     {
         deathZoneOffsetY = deathZone.transform.position.y;
-        initialPos = cameraManager.mainCamera.transform.position;
     }
 
     // Update is called once per frame
@@ -25,7 +23,7 @@ public class GameManager : MonoBehaviour
     {
         if (player.transform.position.y >= cameraManager.mainCamera.transform.position.y)
         {
-            deathZone.transform.position = new Vector3(initialPos.x, cameraManager.mainCamera.transform.position.y + deathZoneOffsetY, 0.0f);
+            deathZone.transform.position = new Vector3(cameraManager.mainCamera.initialPos.x, cameraManager.mainCamera.transform.position.y + deathZoneOffsetY, 0.0f);
             Wall_R.transform.position = new Vector3(Wall_R.transform.position.x, player.transform.position.y, 0.0f);
             Wall_L.transform.position = new Vector3(Wall_L.transform.position.x, player.transform.position.y, 0.0f);
         }
@@ -38,9 +36,9 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator RestartGameCo()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.1f);
 
-        deathZone.transform.position = new Vector3(initialPos.x, cameraManager.mainCamera.transform.position.y + deathZoneOffsetY, initialPos.z);
+        deathZone.transform.position = new Vector3(cameraManager.mainCamera.initialPos.x, cameraManager.mainCamera.transform.position.y + deathZoneOffsetY, cameraManager.mainCamera.initialPos.z);
         Wall_R.transform.position = new Vector3(Wall_R.transform.position.x, 0.0f, 0.0f);
         Wall_L.transform.position = new Vector3(Wall_L.transform.position.x, 0.0f, 0.0f);
 

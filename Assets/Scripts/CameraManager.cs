@@ -41,12 +41,11 @@ public class CameraManager : MonoBehaviour
     void Shake()
     {
         Vector3 rotationAmount = Random.insideUnitSphere * shakeTimer * shakeAmount;
-        rotationAmount.z = 0;
 
         mainCamera.transform.localRotation = Quaternion.Euler(rotationAmount);
     }
 
-    private void StopShake()
+    void StopShake()
     {
         mainCamera.transform.localRotation = Quaternion.Euler(0, 0, 0);
         shakeTimer = totalShakeTime;
