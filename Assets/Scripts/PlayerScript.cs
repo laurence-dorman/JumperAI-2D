@@ -28,6 +28,8 @@ public class PlayerScript : MonoBehaviour
     private LinguisticVariable distance;
     private LinguisticVariable velocity;
 
+    public bool failsafe;
+
     public enum ControlState
     {
         Manual = 0,
@@ -114,6 +116,15 @@ public class PlayerScript : MonoBehaviour
 
     private void ManualControl()
     {
+        double relativeXPos = (double)transform.position.x - (double)obstacleManager.holePos.x;
+
+        if ((Mathf.Abs(transform.position.y - obstacleManager.holePos.y) < 1.5f) && (Mathf.Abs((float)relativeXPos) >= 0.5f) && failsafe)
+        {
+            // might collide
+            moveTime = totalMoveTime;
+            return;
+        }
+
         if (!onLeftWall && (Input.GetKeyDown("a") || Input.GetKeyDown("left")))
         {
             rigidBody.velocity = new Vector2(-speed * 0.5f, speed);
@@ -133,6 +144,15 @@ public class PlayerScript : MonoBehaviour
             moveTime = totalMoveTime;
 
             // do move
+
+            double relativeXPos = (double)transform.position.x - (double)obstacleManager.holePos.x;
+
+            if ((Mathf.Abs(transform.position.y - obstacleManager.holePos.y) < 1.5f) && (Mathf.Abs((float)relativeXPos) >= 0.5f) && failsafe)
+            {
+                // might collide
+                moveTime = totalMoveTime;
+                return;
+            }
         }
     }
 
@@ -150,11 +170,10 @@ public class PlayerScript : MonoBehaviour
 
             double relativeXPos = (double)transform.position.x - (double)obstacleManager.holePos.x;
 
-            if ((Mathf.Abs(transform.position.y - obstacleManager.holePos.y) < 1.5f) && (Mathf.Abs((float)relativeXPos) >= 0.5f))
+            if ((Mathf.Abs(transform.position.y - obstacleManager.holePos.y) < 1.5f) && (Mathf.Abs((float)relativeXPos) >= 0.5f) && failsafe)
             {
                 // might collide
                 moveTime = totalMoveTime;
-                Debug.Log("Might Collide");
                 return;
             }
 

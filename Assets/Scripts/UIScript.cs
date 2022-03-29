@@ -14,6 +14,7 @@ public class UIScript : MonoBehaviour
     Button manualButton;
     Button RBSButton;
     Button FISButton;
+    Toggle failsafeToggle;
 
 
     // Start is called before the first frame update
@@ -45,6 +46,11 @@ public class UIScript : MonoBehaviour
             {
                 FISButton = child.gameObject.GetComponent<Button>();
             }
+            else if (child.tag == "Failsafe")
+            {
+                failsafeToggle = child.gameObject.GetComponent<Toggle>();
+                gameManager.player.failsafe = failsafeToggle.isOn;
+            }
         }
 
         scoreText.text = gameManager.GetScore().ToString();
@@ -52,6 +58,12 @@ public class UIScript : MonoBehaviour
         manualButton.onClick.AddListener(delegate{ChangeState(PlayerScript.ControlState.Manual);});
         RBSButton.onClick.AddListener(delegate{ChangeState(PlayerScript.ControlState.RBS);});
         FISButton.onClick.AddListener(delegate{ChangeState(PlayerScript.ControlState.Fuzzy);});
+        failsafeToggle.onValueChanged.AddListener(delegate { ToggleValueChanged(failsafeToggle);});
+    }
+
+    void ToggleValueChanged(Toggle change)
+    {
+        gameManager.player.failsafe = change.isOn;
     }
 
     void ChangeState(PlayerScript.ControlState state)
