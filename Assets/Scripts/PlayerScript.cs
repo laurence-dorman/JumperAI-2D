@@ -7,6 +7,7 @@ public class PlayerScript : MonoBehaviour
     [SerializeField] private float speed = 5.0f;
     [SerializeField] private float deathTimerTotal = 3.0f;
     [SerializeField] private GameManager gameManager;
+    [SerializeField] private ObstacleManager obstacleManager;
 
     private Rigidbody2D rigidBody;
     private Vector3 startingPos;
@@ -55,21 +56,28 @@ public class PlayerScript : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.tag == "Deadly" && alive)
+        if (other.gameObject.CompareTag("Deadly") && alive)
         {
             gameManager.cameraManager.setShaking(true);
             rigidBody.velocity = new Vector2(0.0f, -10.0f); // fall
             alive = false;
         }
+
+        if (other.gameObject.CompareTag("Respawn") && alive)
+        {
+            Destroy(other.gameObject);
+            obstacleManager.AddObstacle();
+        }
+
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Right Wall")
+        if (collision.gameObject.CompareTag("Right Wall"))
         {
             onRightWall = true;
         }
-        else if (collision.gameObject.tag == "Left Wall")
+        else if (collision.gameObject.CompareTag("Left Wall"))
         {
             onLeftWall = true;
         }
@@ -77,11 +85,11 @@ public class PlayerScript : MonoBehaviour
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Right Wall")
+        if (collision.gameObject.CompareTag("Right Wall"))
         {
             onRightWall = false;
         }
-        else if (collision.gameObject.tag == "Left Wall")
+        else if (collision.gameObject.CompareTag("Left Wall"))
         {
             onLeftWall = false;
         }

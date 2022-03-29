@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject deathZone;
     [SerializeField] private GameObject Wall_R;
     [SerializeField] private GameObject Wall_L;
+    [SerializeField] private ObstacleManager obstacleManager;
 
     public CameraManager cameraManager;
 
@@ -44,5 +45,7 @@ public class GameManager : MonoBehaviour
 
         player.ResetPlayer();
         cameraManager.ResetCameraManager();
+        obstacleManager.ResetObstacleManager();
+        
     }
 }
