@@ -31,11 +31,11 @@ public class PlayerScript : MonoBehaviour
     {
         if (alive)
         {
-            if (Input.GetKeyDown("a") || Input.GetKeyDown("left") && !onLeftWall)
+            if (!onLeftWall && (Input.GetKeyDown("a") || Input.GetKeyDown("left")))
             {
                 rigidBody.velocity = new Vector2(-speed * 0.5f, speed);
             }
-            if (Input.GetKeyDown("d") || Input.GetKeyDown("right") && !onRightWall)
+            if (!onRightWall && (Input.GetKeyDown("d") || Input.GetKeyDown("right")))
             {
                 rigidBody.velocity = new Vector2(speed * 0.5f, speed);
             }
@@ -69,6 +69,11 @@ public class PlayerScript : MonoBehaviour
             obstacleManager.AddObstacle();
         }
 
+        if (other.gameObject.CompareTag("Score") && alive)
+        {
+            Destroy(other.gameObject);
+            gameManager.AddScore(1);
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

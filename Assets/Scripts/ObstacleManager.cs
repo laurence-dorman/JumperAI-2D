@@ -7,6 +7,7 @@ public class ObstacleManager : MonoBehaviour
     [SerializeField] private PlayerScript player;
     [SerializeField] private GameObject prefab;
     [SerializeField] private GameObject spawnCollider;
+    [SerializeField] private GameObject scoreCollider;
     [SerializeField] private CameraScript cameraScript;
 
     private Queue<System.Tuple<GameObject, GameObject, GameObject>> obstacles = new Queue<System.Tuple<GameObject, GameObject, GameObject>>();
@@ -19,6 +20,8 @@ public class ObstacleManager : MonoBehaviour
         GameObject spawnColliderObject = Instantiate(spawnCollider, new Vector2(0f, -50f), Quaternion.identity);
 
         obstacles.Enqueue(new System.Tuple<GameObject, GameObject, GameObject>(leftObstacle, rightObstacle, spawnColliderObject)); // add object to queue
+
+        GameObject scoreColliderObject = Instantiate(scoreCollider, new Vector2(0f, -50f), Quaternion.identity);
 
         AddObstacle();
     }
@@ -45,6 +48,7 @@ public class ObstacleManager : MonoBehaviour
         GameObject leftObstacle = Instantiate(prefab, obstacleLPos, Quaternion.identity);
         GameObject rightObstacle = Instantiate(prefab, obstacleRPos, Quaternion.identity);
         GameObject spawnColliderObject = Instantiate(spawnCollider, new Vector2(0f, leftObstacle.transform.position.y - 3f), Quaternion.identity);
+        GameObject scoreColliderObject = Instantiate(scoreCollider, new Vector2(0f, player.transform.position.y + 7.5f), Quaternion.identity);
 
         obstacles.Enqueue(new System.Tuple<GameObject, GameObject, GameObject>(leftObstacle, rightObstacle, spawnColliderObject)); // add object to queue
     }

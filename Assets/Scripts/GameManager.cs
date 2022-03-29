@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     public CameraManager cameraManager;
 
     private float deathZoneOffsetY;
+    private int score = 0;
 
     // Use this for initialization
     void Start()
@@ -30,6 +31,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void AddScore(int amount)
+    {
+        score += amount;
+    }
     public void RestartGame()
     {
         StartCoroutine("RestartGameCo");
