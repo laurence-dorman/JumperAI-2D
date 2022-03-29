@@ -87,8 +87,5 @@ public class UIScript : MonoBehaviour
     {
         scoreText.text = gameManager.GetScore().ToString();
         SetModeTracker();
-
-
-
     }
 }

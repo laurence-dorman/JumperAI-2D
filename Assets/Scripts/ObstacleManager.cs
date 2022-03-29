@@ -10,7 +10,9 @@ public class ObstacleManager : MonoBehaviour
     [SerializeField] private GameObject scoreCollider;
     [SerializeField] private CameraScript cameraScript;
 
-    private Queue<System.Tuple<GameObject, GameObject, GameObject>> obstacles = new Queue<System.Tuple<GameObject, GameObject, GameObject>>();
+    public Vector2 holePos;
+
+    private List<System.Tuple<GameObject, GameObject, GameObject>> obstaclesList = new List<System.Tuple<GameObject, GameObject, GameObject>>();
 
     // Start is called before the first frame update
     void Start()
@@ -21,13 +23,28 @@ public class ObstacleManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (obstacles.Count != 0)
+        if (obstaclesList.Count != 0)
         {
-            if (IsOffScreen(obstacles.Peek().Item1.transform.position))
+            if (IsOffScreen(obstaclesList[0].Item1.transform.position))
             {
                 RemoveObstacle();
             }
+
+            holePos = GetTargetHole();
         }
+    }
+
+    Vector2 GetTargetHole()
+    {
+        var bestObstacle = obstaclesList[0];
+        for (int i = 0; i < obstaclesList.Count; i++)
+        {
+            if (player.transform.position.y >= obstaclesList[i].Item1.transform.position.y)
+            {
+                bestObstacle = obstaclesList[i + 1];
+            }
+        }
+        return (bestObstacle.Item1.transform.position + bestObstacle.Item2.transform.position) / 2.0f;
     }
 
     public void AddObstacle()
@@ -42,8 +59,8 @@ public class ObstacleManager : MonoBehaviour
         GameObject spawnColliderObject = Instantiate(spawnCollider, new Vector2(0f, leftObstacle.transform.position.y - 3f), Quaternion.identity);
         GameObject scoreColliderObject = Instantiate(scoreCollider, new Vector2(0f, player.transform.position.y + 7.5f), Quaternion.identity);
 
-        obstacles.Enqueue(new System.Tuple<GameObject, GameObject, GameObject>(leftObstacle, rightObstacle, spawnColliderObject)); // add object to queue
-        Debug.Log("bing");
+        obstaclesList.Add(new System.Tuple<GameObject, GameObject, GameObject>(leftObstacle, rightObstacle, spawnColliderObject)); // add object to list
+        
     }
 
     public bool IsOffScreen(Vector3 pos)
@@ -57,22 +74,22 @@ public class ObstacleManager : MonoBehaviour
 
     public void RemoveObstacle()
     {
-        if (obstacles.Count == 0) return;
-        Destroy(obstacles.Peek().Item1); // destroy object
-        Destroy(obstacles.Peek().Item2); // destroy object
-        Destroy(obstacles.Peek().Item3); // destroy object
-        obstacles.Dequeue(); // remove from queue
+        if (obstaclesList.Count == 0) return;
+        Destroy(obstaclesList[0].Item1); // destroy object
+        Destroy(obstaclesList[0].Item2); // destroy object
+        Destroy(obstaclesList[0].Item3); // destroy object
+        obstaclesList.RemoveAt(0); // remove from queue
     }
 
     public void ResetObstacleManager()
     {
-        foreach (var obstacle in obstacles)
+        foreach (var obstacle in obstaclesList)
         {
             Destroy(obstacle.Item1);
             Destroy(obstacle.Item2);
             Destroy(obstacle.Item3);
         }
-        obstacles.Clear();
+        obstaclesList.Clear();
 
         Start();
     }

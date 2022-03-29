@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using FLS;
+using FLS.Rules;
+using FLS.MembershipFunctions;
+
 public class PlayerScript : MonoBehaviour
 {
     [SerializeField] private float speed = 5.0f;
@@ -16,6 +20,13 @@ public class PlayerScript : MonoBehaviour
     private bool alive = true;
     private bool onRightWall = false;
     private bool onLeftWall = false;
+
+    private float moveTime;
+    private const float totalMoveTime = 0.3f;
+
+    private IFuzzyEngine engine;
+    private LinguisticVariable distance;
+    private LinguisticVariable velocity;
 
     public enum ControlState
     {
@@ -34,13 +45,39 @@ public class PlayerScript : MonoBehaviour
         startingRotation = transform.rotation;
         deathTimer = deathTimerTotal;
         controlState = ControlState.Manual;
+
+        moveTime = totalMoveTime;
+
+        // Set up fuzzy inference system
+        distance = new LinguisticVariable("distance");
+        var right = distance.MembershipFunctions.AddTrapezoid("right", -5, -5, -5, -0.1);
+        var none = distance.MembershipFunctions.AddTrapezoid("none", -0.5, -0.05, 0.05, 0.5);
+        var left = distance.MembershipFunctions.AddTrapezoid("left", 0.1, 5, 5, 5);
+
+        velocity = new LinguisticVariable("velocity");
+        var v_right = velocity.MembershipFunctions.AddTrapezoid("right", -5, -5, -5, -0.1);
+        var v_none = velocity.MembershipFunctions.AddTrapezoid("none", -0.5, -0.05, 0.05, 0.5);
+        var v_left = velocity.MembershipFunctions.AddTrapezoid("left", 0.1, 5, 5, 5);
+
+        engine = new FuzzyEngineFactory().Default();
+
+        var rule1 = Rule.If(distance.Is(right)).Then(velocity.Is(v_left));
+        var rule2 = Rule.If(distance.Is(left)).Then(velocity.Is(v_right));
+        var rule3 = Rule.If(distance.Is(none)).Then(velocity.Is(v_none));
+
+        engine.Rules.Add(rule1, rule2, rule3);
     }
 
     // Update is called once per frame
     void Update()
     {
+        
+
         if (alive)
         {
+            //Debug.Log("Y Delta: " + (transform.position.y - obstacleManager.holePos.y));
+            //Debug.Log("Relative X: " + ((double)transform.position.x - (double)obstacleManager.holePos.x));
+
             switch (controlState) // switch between control states
             {
                 case ControlState.Manual:
@@ -89,12 +126,40 @@ public class PlayerScript : MonoBehaviour
 
     private void RBSControl()
     {
+        moveTime -= Time.deltaTime;
 
+        if (moveTime <= 0.0f)
+        {
+            moveTime = totalMoveTime;
+
+            // do move
+        }
     }
 
     private void FuzzyControl()
     {
+        moveTime -= Time.deltaTime;
 
+        if (moveTime <= 0.0f)
+        {
+            moveTime = totalMoveTime;
+
+            // do move
+
+            // get position relative to hole
+
+            double relativeXPos = (double)transform.position.x - (double)obstacleManager.holePos.x;
+
+            if ((Mathf.Abs(transform.position.y - obstacleManager.holePos.y) < 1.5f) && (Mathf.Abs((float)relativeXPos) >= 0.5f))
+            {
+                // might collide
+                moveTime = totalMoveTime;
+                Debug.Log("Might Collide");
+                return;
+            }
+
+            rigidBody.velocity = new Vector2((float)engine.Defuzzify(new { distance = relativeXPos }), speed);
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
