@@ -17,6 +17,15 @@ public class PlayerScript : MonoBehaviour
     private bool onRightWall = false;
     private bool onLeftWall = false;
 
+    public enum ControlState
+    {
+        Manual = 0,
+        RBS    = 1,
+        Fuzzy  = 2
+    }
+
+    public ControlState controlState;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -24,6 +33,7 @@ public class PlayerScript : MonoBehaviour
         startingPos = transform.position;
         startingRotation = transform.rotation;
         deathTimer = deathTimerTotal;
+        controlState = ControlState.Manual;
     }
 
     // Update is called once per frame
@@ -31,13 +41,23 @@ public class PlayerScript : MonoBehaviour
     {
         if (alive)
         {
-            if (!onLeftWall && (Input.GetKeyDown("a") || Input.GetKeyDown("left")))
+            switch (controlState) // switch between control states
             {
-                rigidBody.velocity = new Vector2(-speed * 0.5f, speed);
-            }
-            if (!onRightWall && (Input.GetKeyDown("d") || Input.GetKeyDown("right")))
-            {
-                rigidBody.velocity = new Vector2(speed * 0.5f, speed);
+                case ControlState.Manual:
+                {
+                    ManualControl();
+                    break;
+                }
+                case ControlState.RBS:
+                {
+                    RBSControl();
+                    break;
+                }
+                case ControlState.Fuzzy:
+                {
+                    FuzzyControl();
+                    break;
+                }
             }
         }
         else
@@ -54,24 +74,49 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void ManualControl()
     {
-        if (other.gameObject.CompareTag("Deadly") && alive)
+        if (!onLeftWall && (Input.GetKeyDown("a") || Input.GetKeyDown("left")))
+        {
+            rigidBody.velocity = new Vector2(-speed * 0.5f, speed);
+        }
+        if (!onRightWall && (Input.GetKeyDown("d") || Input.GetKeyDown("right")))
+        {
+            rigidBody.velocity = new Vector2(speed * 0.5f, speed);
+        }
+    }
+
+    private void RBSControl()
+    {
+
+    }
+
+    private void FuzzyControl()
+    {
+
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Deadly") && alive)
         {
             gameManager.cameraManager.setShaking(true);
             rigidBody.velocity = new Vector2(0.0f, -10.0f); // fall
             alive = false;
         }
 
-        if (other.gameObject.CompareTag("Respawn") && alive)
+        if (collision.gameObject.CompareTag("Respawn") && alive)
         {
-            Destroy(other.gameObject);
+            Destroy(collision.gameObject);
             obstacleManager.AddObstacle();
         }
+    }
 
-        if (other.gameObject.CompareTag("Score") && alive)
+    public void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Score") && alive)
         {
-            Destroy(other.gameObject);
+            Destroy(collision.gameObject);
             gameManager.AddScore(1);
         }
     }

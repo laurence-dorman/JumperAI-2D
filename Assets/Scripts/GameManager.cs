@@ -3,7 +3,7 @@ using UnityEngine;
     
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private PlayerScript player;
+    [SerializeField] public PlayerScript player;
     [SerializeField] private GameObject deathZone;
     [SerializeField] private GameObject Wall_R;
     [SerializeField] private GameObject Wall_L;
@@ -35,6 +35,15 @@ public class GameManager : MonoBehaviour
     {
         score += amount;
     }
+    public int GetScore()
+    {
+        return score;
+    }
+
+    public void SetScore(int score)
+    {
+        this.score = score;
+    }
     public void RestartGame()
     {
         StartCoroutine("RestartGameCo");
@@ -51,6 +60,7 @@ public class GameManager : MonoBehaviour
         player.ResetPlayer();
         cameraManager.ResetCameraManager();
         obstacleManager.ResetObstacleManager();
+        SetScore(0);
         
     }
 }
