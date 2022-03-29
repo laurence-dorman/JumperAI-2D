@@ -15,14 +15,6 @@ public class ObstacleManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        GameObject leftObstacle = Instantiate(prefab, new Vector2(0f, -50f), Quaternion.identity);
-        GameObject rightObstacle = Instantiate(prefab, new Vector2(0f, -50f), Quaternion.identity);
-        GameObject spawnColliderObject = Instantiate(spawnCollider, new Vector2(0f, -50f), Quaternion.identity);
-
-        obstacles.Enqueue(new System.Tuple<GameObject, GameObject, GameObject>(leftObstacle, rightObstacle, spawnColliderObject)); // add object to queue
-
-        GameObject scoreColliderObject = Instantiate(scoreCollider, new Vector2(0f, -50f), Quaternion.identity);
-
         AddObstacle();
     }
 
@@ -51,6 +43,7 @@ public class ObstacleManager : MonoBehaviour
         GameObject scoreColliderObject = Instantiate(scoreCollider, new Vector2(0f, player.transform.position.y + 7.5f), Quaternion.identity);
 
         obstacles.Enqueue(new System.Tuple<GameObject, GameObject, GameObject>(leftObstacle, rightObstacle, spawnColliderObject)); // add object to queue
+        Debug.Log("bing");
     }
 
     public bool IsOffScreen(Vector3 pos)

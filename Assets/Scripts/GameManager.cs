@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
     
 public class GameManager : MonoBehaviour
 {
@@ -46,21 +47,6 @@ public class GameManager : MonoBehaviour
     }
     public void RestartGame()
     {
-        StartCoroutine("RestartGameCo");
-    }
-
-    public IEnumerator RestartGameCo()
-    {
-        yield return new WaitForSeconds(0.1f);
-
-        deathZone.transform.position = new Vector3(cameraManager.mainCamera.initialPos.x, cameraManager.mainCamera.transform.position.y + deathZoneOffsetY, cameraManager.mainCamera.initialPos.z);
-        Wall_R.transform.position = new Vector3(Wall_R.transform.position.x, 0.0f, 0.0f);
-        Wall_L.transform.position = new Vector3(Wall_L.transform.position.x, 0.0f, 0.0f);
-
-        player.ResetPlayer();
-        cameraManager.ResetCameraManager();
-        obstacleManager.ResetObstacleManager();
-        SetScore(0);
-        
+        SceneManager.LoadScene("SampleScene");
     }
 }

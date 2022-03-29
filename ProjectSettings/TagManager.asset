@@ -8,6 +8,11 @@ TagManager:
   - Right Wall
   - Left Wall
   - Score
+  - modeTracker
+  - modeTitle
+  - ManualButton
+  - RBSButton
+  - FISButton
   layers:
   - Default
   - TransparentFX

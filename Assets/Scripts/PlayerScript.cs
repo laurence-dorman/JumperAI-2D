@@ -69,6 +69,7 @@ public class PlayerScript : MonoBehaviour
             }
             else
             {
+                deathTimer = deathTimerTotal;
                 gameManager.RestartGame();
             }
         }
