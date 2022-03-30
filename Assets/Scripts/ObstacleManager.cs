@@ -39,7 +39,7 @@ public class ObstacleManager : MonoBehaviour
         var bestObstacle = obstaclesList[0];
         for (int i = 0; i < obstaclesList.Count; i++)
         {
-            if (player.transform.position.y >= obstaclesList[i].Item1.transform.position.y)
+            if (player.transform.position.y >= obstaclesList[i].Item1.transform.position.y + 0.5f)
             {
                 bestObstacle = obstaclesList[i + 1];
             }

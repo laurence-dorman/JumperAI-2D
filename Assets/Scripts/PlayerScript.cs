@@ -22,7 +22,8 @@ public class PlayerScript : MonoBehaviour
     private bool onLeftWall = false;
 
     private float moveTime;
-    private const float totalMoveTime = 0.3f;
+    private const float totalMoveTime = 0.2f;
+    private float maxHeight = 0.0f;
 
     private IFuzzyEngine engine;
     private LinguisticVariable distance;
@@ -53,13 +54,13 @@ public class PlayerScript : MonoBehaviour
         // Set up fuzzy inference system
         distance = new LinguisticVariable("distance");
         var right = distance.MembershipFunctions.AddTrapezoid("right", -5, -5, -5, -0.1);
-        var none = distance.MembershipFunctions.AddTrapezoid("none", -0.5, -0.05, 0.05, 0.5);
+        var none = distance.MembershipFunctions.AddTrapezoid("none", -5, -0.05, 0.05, 5);
         var left = distance.MembershipFunctions.AddTrapezoid("left", 0.1, 5, 5, 5);
 
         velocity = new LinguisticVariable("velocity");
-        var v_right = velocity.MembershipFunctions.AddTrapezoid("right", -5, -5, -5, -0.1);
-        var v_none = velocity.MembershipFunctions.AddTrapezoid("none", -0.5, -0.05, 0.05, 0.5);
-        var v_left = velocity.MembershipFunctions.AddTrapezoid("left", 0.1, 5, 5, 5);
+        var v_right = velocity.MembershipFunctions.AddTrapezoid("right", -25, -25, -25, -0.1);
+        var v_none = velocity.MembershipFunctions.AddTrapezoid("none", -5, -0.05, 0.05, 5);
+        var v_left = velocity.MembershipFunctions.AddTrapezoid("left", 0.1, 25, 25, 25);
 
         engine = new FuzzyEngineFactory().Default();
 
@@ -73,12 +74,12 @@ public class PlayerScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-
         if (alive)
         {
-            //Debug.Log("Y Delta: " + (transform.position.y - obstacleManager.holePos.y));
-            //Debug.Log("Relative X: " + ((double)transform.position.x - (double)obstacleManager.holePos.x));
+            if (transform.position.y > maxHeight)
+            {
+                maxHeight = transform.position.y;
+            }
 
             switch (controlState) // switch between control states
             {
@@ -139,13 +140,15 @@ public class PlayerScript : MonoBehaviour
     {
         moveTime -= Time.deltaTime;
 
-        if (moveTime <= 0.0f)
+        double relativeXPos = (double)transform.position.x - (double)obstacleManager.holePos.x;
+
+        Debug.Log(relativeXPos);
+        // do a move if we are under the hole, or we have fallen past our previous max height
+        if (transform.position.y < maxHeight || (relativeXPos <= 1.0f && relativeXPos >= -1.0f))
         {
             moveTime = totalMoveTime;
 
             // do move
-
-            double relativeXPos = (double)transform.position.x - (double)obstacleManager.holePos.x;
 
             if ((Mathf.Abs(transform.position.y - obstacleManager.holePos.y) < 1.5f) && (Mathf.Abs((float)relativeXPos) >= 0.5f) && failsafe)
             {
@@ -153,6 +156,8 @@ public class PlayerScript : MonoBehaviour
                 moveTime = totalMoveTime;
                 return;
             }
+
+            rigidBody.velocity = new Vector2((float)-relativeXPos*speed, speed);
         }
     }
 
@@ -178,6 +183,8 @@ public class PlayerScript : MonoBehaviour
             }
 
             rigidBody.velocity = new Vector2((float)engine.Defuzzify(new { distance = relativeXPos }), speed);
+            Debug.Log("Velocity: " + rigidBody.velocity);
+            Debug.Log("Relative X Pos: " + relativeXPos);
         }
     }
 
